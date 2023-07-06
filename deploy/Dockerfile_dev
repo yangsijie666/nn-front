@@ -1,0 +1,11 @@
+FROM node:18.0.0
+
+WORKDIR /usr/src/app/
+USER root
+
+COPY package.json ./
+RUN npm install tyarn -g && tyarn
+
+COPY ./ ./
+
+CMD ["npm", "run", "start"]
