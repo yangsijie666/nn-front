@@ -11,18 +11,24 @@ const valueEnum: {
 };
 
 const genList = (current: number, pageSize: number) => {
-  const tableListDataSource: API.TableListItem[] = [];
+  const tableListDataSource: API.TextToSpeechTaskItem[] = [];
 
   for (let i = 0; i < pageSize; i += 1) {
-    const index = (current - 1) * 10 + i;
+    let s = valueEnum[Math.floor(Math.random() * 10) % 3];
     tableListDataSource.push({
-      key: index,
       taskId: uuidv4(),
-      status: valueEnum[Math.floor(Math.random() * 10) % 3],
-      createdAt: Date.now() - Math.floor(Math.random() * 2000),
+      status: s,
+      createdAt: (Date.now() - Math.floor(Math.random() * 100000)).toString(),
+      completedAt: s != 'running' ? Date.now().toString() : '',
+      result:
+        s == 'running'
+          ? ''
+          : s == 'success'
+          ? 'this is a success result'
+          : 'thist is a fail reason',
     });
   }
-  tableListDataSource.reverse();
+  tableListDataSource.sort((a, b) => parseInt(b.createdAt) - parseInt(a.createdAt));
   return tableListDataSource;
 };
 
@@ -46,19 +52,33 @@ function listTasks(req: Request, res: Response, u: string) {
   if (startTime && endTime) {
     let start = moment(startTime, 'YYYY-MM-DD HH:mm:ss');
     let end = moment(endTime, 'YYYY-MM-DD HH:mm:ss');
+    console.log(start.unix());
+    console.log(end.unix());
+    console.log(dataSource);
     dataSource = dataSource.filter(
-      (data) => start.unix() <= data.createdAt && data.createdAt <= end.unix(),
+      (data) =>
+        start.unix() * 1000 <= parseInt(data.createdAt) &&
+        parseInt(data.createdAt) <= end.unix() * 1000,
     );
   }
 
   let total = dataSource.length;
-  dataSource = [...dataSource].slice(
-    ((current as number) - 1) * (pageSize as number),
-    (current as number) * (pageSize as number),
-  );
+  let data = [...dataSource]
+    .slice(
+      ((current as number) - 1) * (pageSize as number),
+      (current as number) * (pageSize as number),
+    )
+    .map(
+      (item): API.TableListItem =>
+        <API.TableListItem>{
+          taskId: item.taskId,
+          createdAt: parseInt(item.createdAt),
+          status: item.status,
+        },
+    );
 
   const result = {
-    data: dataSource,
+    data: data,
     total: total,
     success: true,
     pageSize,
@@ -68,6 +88,31 @@ function listTasks(req: Request, res: Response, u: string) {
   return res.json(result);
 }
 
+function describeTask(req: Request, res: Response, u: string) {
+  const { task_id } = req.query;
+  let taskId = task_id;
+  const task = tableListDataSource.find((item) => item.taskId === taskId);
+  if (task === undefined) {
+    let result: API.DescribeTextToSpeechTaskResponse = {
+      success: false,
+      errorCode: 'TASK NOT FOUND',
+      errorMessage: 'task not found -' + taskId,
+    };
+    setTimeout(() => {}, Math.floor(Math.random() * 100));
+    return res.json(result);
+  }
+
+  let result: API.DescribeTextToSpeechTaskResponse = {
+    success: true,
+    data: task,
+  };
+  console.log(Math.random());
+  setTimeout(() => {}, Math.floor(Math.random() * 100));
+
+  return res.json(result);
+}
+
 export default {
   'POST /textToSpeech/list': listTasks,
+  'GET /textToSpeech/describe': describeTask,
 };

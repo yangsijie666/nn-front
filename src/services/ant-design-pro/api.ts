@@ -86,11 +86,19 @@ export async function removeRule(options?: { [key: string]: any }) {
 
 /** 获取文字转语音列表 */
 export async function listTextToSpeechTasks(options?: { [key: string]: any }) {
-  console.log('hehehheehehe');
   return request<API.ListTTSResponse>('/textToSpeech/list', {
     method: 'POST',
     data: {
       ...options,
+    },
+  });
+}
+
+export async function describeTextToSpeechTask(taskId: string) {
+  return request<API.DescribeTextToSpeechTaskResponse>('/textToSpeech/describe', {
+    method: 'GET',
+    params: {
+      task_id: taskId,
     },
   });
 }

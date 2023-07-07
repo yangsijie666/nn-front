@@ -1,22 +1,21 @@
-import React, {useState} from "react";
-import {ModalForm, ProFormText, ProFormTextArea} from "@ant-design/pro-components";
-import {FormattedMessage, useIntl} from "@@/exports";
-import {FormValueType} from "@/pages/TableList/components/UpdateForm";
-import {CommentOutlined} from "@ant-design/icons";
-
+import { FormattedMessage } from '@@/exports';
+import { CommentOutlined } from '@ant-design/icons';
+import { ModalForm, ProFormTextArea } from '@ant-design/pro-components';
+import React from 'react';
 
 export type NewTaskFormProps = {
   open: boolean;
   onOpenChange: (visible: boolean) => void;
-  onFinish: (values: FormValueType) => Promise<void>;
-}
+  onFinish: (text: string) => Promise<void>;
+};
 
 const NewTaskForm: React.FC<NewTaskFormProps> = (props: NewTaskFormProps) => {
   return (
     <ModalForm
       title={
         <span>
-          <CommentOutlined />{'  '}
+          <CommentOutlined />
+          {'  '}
           <FormattedMessage
             id="pages.searchTable.createForm.newTextToSpeechTask"
             defaultMessage="New TextToSpeech task"
@@ -48,12 +47,12 @@ const NewTaskForm: React.FC<NewTaskFormProps> = (props: NewTaskFormProps) => {
           showCount: true,
           autoSize: {
             minRows: 7,
-          }
+          },
         }}
         style={{ width: '100%' }}
       />
     </ModalForm>
-  )
-}
+  );
+};
 
 export default NewTaskForm;

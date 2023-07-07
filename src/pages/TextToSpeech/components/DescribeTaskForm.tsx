@@ -1,36 +1,37 @@
-import React from "react";
-import {ModalForm} from "@ant-design/pro-form";
-import {Descriptions, Badge, Spin} from "antd";
-import {AudioOutlined} from "@ant-design/icons";
+import { AudioOutlined } from '@ant-design/icons';
+import { ModalForm } from '@ant-design/pro-form';
+import { Badge, Descriptions, Spin } from 'antd';
+import moment from 'moment';
+import React from 'react';
 
 export type DescribeTaskFormProps = {
   open: boolean;
   onOpenChange: (visible: boolean) => void;
   value: Partial<API.TextToSpeechTaskItem>;
   loading: boolean;
-}
+};
 
 type StatusMap = {
   [key: string]: {
-    status: "processing" | "success" | "error";
+    status: 'processing' | 'success' | 'error';
     text: string;
   };
 };
 
 const statusMap: StatusMap = {
   running: {
-    status: "processing",
-    text: "运行中"
+    status: 'processing',
+    text: '运行中',
   },
   success: {
-    status: "success",
-    text: "成功"
+    status: 'success',
+    text: '成功',
   },
   fail: {
-    status: "error",
-    text: "失败"
+    status: 'error',
+    text: '失败',
   },
-}
+};
 
 const DescribeTaskForm: React.FC<DescribeTaskFormProps> = (props: DescribeTaskFormProps) => {
   const statusItem = statusMap[props.value.status ? props.value.status : 'running'];
@@ -42,7 +43,8 @@ const DescribeTaskForm: React.FC<DescribeTaskFormProps> = (props: DescribeTaskFo
     }>
       title={
         <span>
-          <AudioOutlined />{' 工单详情'}
+          <AudioOutlined />
+          {' 工单详情'}
         </span>
       }
       open={props.open}
@@ -51,25 +53,24 @@ const DescribeTaskForm: React.FC<DescribeTaskFormProps> = (props: DescribeTaskFo
       submitter={false}
     >
       {props.loading ? (
-          <div style={{textAlign: "center"}}>
-            <Spin />
-          </div>
+        <div style={{ textAlign: 'center' }}>
+          <Spin />
+        </div>
       ) : (
-        <Descriptions
-          bordered
-          column={2}
-        >
+        <Descriptions bordered column={2}>
           <Descriptions.Item label="任务单号" span={2}>
             {props.value.taskId}
           </Descriptions.Item>
           <Descriptions.Item label="创建时间" span={1}>
-            {props.value.createdAt}
+            {moment(parseInt(props.value.createdAt as string)).format('YYYY-MM-DD HH:mm:ss')}
           </Descriptions.Item>
           <Descriptions.Item label="完成时间" span={1}>
-            {props.value.completedAt}
+            {props.value.completedAt !== ''
+              ? moment(parseInt(props.value.completedAt as string)).format('YYYY-MM-DD HH:mm:ss')
+              : ''}
           </Descriptions.Item>
           <Descriptions.Item label="状态" span={2}>
-            <Badge status={statusItem.status} text={statusItem.text}/>
+            <Badge status={statusItem.status} text={statusItem.text} />
           </Descriptions.Item>
           <Descriptions.Item label="任务结果" span={2}>
             {props.value.result}
@@ -78,6 +79,6 @@ const DescribeTaskForm: React.FC<DescribeTaskFormProps> = (props: DescribeTaskFo
       )}
     </ModalForm>
   );
-}
+};
 
 export default DescribeTaskForm;

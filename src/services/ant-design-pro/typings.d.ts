@@ -50,15 +50,21 @@ declare namespace API {
   };
 
   type TextToSpeechTaskItem = {
-    taskId?: string;
-    createdAt?: string;
+    taskId: string;
+    createdAt: string;
     completedAt?: string;
-    status?: string;
+    status: string;
     result?: string;
   };
 
+  type DescribeTextToSpeechTaskResponse = {
+    success: boolean;
+    errorCode?: string;
+    errorMessage?: string;
+    data?: TextToSpeechTaskItem;
+  };
+
   type TableListItem = {
-    key: number;
     taskId: string;
     createdAt: number;
     status: string;

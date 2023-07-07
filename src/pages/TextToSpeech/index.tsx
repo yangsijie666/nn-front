@@ -1,9 +1,8 @@
-import { listTextToSpeechTasks } from '@/services/ant-design-pro/api';
+import { describeTextToSpeechTask, listTextToSpeechTasks } from '@/services/ant-design-pro/api';
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import type { ProColumns } from '@ant-design/pro-components';
 import { ActionType, PageContainer, ProTable } from '@ant-design/pro-components';
-import { Button, Input } from 'antd';
-import moment from 'moment';
+import { Button, Input, message } from 'antd';
 import React, { useRef, useState } from 'react';
 import DescribeTaskForm from './components/DescribeTaskForm';
 import NewTaskForm from './components/NewTaskForm';
@@ -26,34 +25,27 @@ const TextToSpeech: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [currentTask, setCurrentTask] = useState<API.TextToSpeechTaskItem>();
 
-  const handleDescribeTaskModal = ({ record }: { record: API.TableListItem }) => {
+  const handleDescribeTaskModal = async ({ record }: { record: API.TableListItem }) => {
     setLoading(true);
     handleDescribeTaskModalOpen(true);
-    setTimeout(() => {
+    try {
+      const resp = await describeTextToSpeechTask(record.taskId);
+      if (!resp.success) {
+        message.error('describe tts task error');
+        handleDescribeTaskModalOpen(false);
+        return;
+      }
+      setCurrentTask(resp.data);
+    } catch (error) {
+      console.log(error);
+      message.error('describe tts task error');
+      handleDescribeTaskModalOpen(false);
+    } finally {
       setLoading(false);
-      setCurrentTask({
-        taskId: record.taskId,
-        createdAt: moment(new Date(record.createdAt)).format('YYYY-MM-DD HH:mm:ss'),
-        completedAt:
-          record.status === 'running' ? '' : moment(Date.now()).format('YYYY-MM-DD HH:mm:ss'),
-        status: record.status,
-        result:
-          record.status === 'success'
-            ? 'this is a success result.'
-            : record.status === 'fail'
-            ? 'this is a fail reason'
-            : '',
-      });
-    }, 2000);
+    }
   };
 
   const columns: ProColumns<API.TableListItem>[] = [
-    {
-      title: '排序',
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
     {
       title: '任务单号',
       dataIndex: 'taskId',
