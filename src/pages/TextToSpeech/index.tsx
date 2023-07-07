@@ -1,37 +1,12 @@
-import moment from 'moment';
+import { listTextToSpeechTasks } from '@/services/ant-design-pro/api';
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import type { ProColumns } from '@ant-design/pro-components';
-import {ActionType, ModalForm, PageContainer, ProFormText, ProFormTextArea, ProTable} from '@ant-design/pro-components';
-import {Button, Input, Spin} from 'antd';
-import React, {useRef, useState} from "react";
-import {FormattedMessage, useIntl} from "@@/exports";
+import { ActionType, PageContainer, ProTable } from '@ant-design/pro-components';
+import { Button, Input } from 'antd';
+import moment from 'moment';
+import React, { useRef, useState } from 'react';
+import DescribeTaskForm from './components/DescribeTaskForm';
 import NewTaskForm from './components/NewTaskForm';
-import DescribeTaskForm from "./components/DescribeTaskForm";
-import { v4 as uuidv4 } from 'uuid';
-
-const valueEnum = {
-  0: 'running',
-  1: 'success',
-  2: 'fail',
-};
-
-export type TableListItem = {
-  key: number;
-  taskId: string;
-  createdAt: number;
-  status: string;
-};
-const tableListDataSource: TableListItem[] = [];
-
-// 生成 mock 数据
-for (let i = 0; i < 20; i += 1) {
-  tableListDataSource.push({
-    key: i,
-    taskId: uuidv4(),
-    status: valueEnum[Math.floor(Math.random() * 10) % 3],
-    createdAt: Date.now() - Math.floor(Math.random() * 2000),
-  });
-}
 
 const TextToSpeech: React.FC = () => {
   /**
@@ -49,24 +24,30 @@ const TextToSpeech: React.FC = () => {
   const actionRef = useRef<ActionType>();
 
   const [loading, setLoading] = useState(false);
-  const [currentTask, setCurrentTask] = useState<API.TextToSpeechTaskItem>()
+  const [currentTask, setCurrentTask] = useState<API.TextToSpeechTaskItem>();
 
-  const handleDescribeTaskModal = ({record}: { record: TableListItem }) => {
-    setLoading(true)
+  const handleDescribeTaskModal = ({ record }: { record: API.TableListItem }) => {
+    setLoading(true);
     handleDescribeTaskModalOpen(true);
     setTimeout(() => {
       setLoading(false);
       setCurrentTask({
         taskId: record.taskId,
         createdAt: moment(new Date(record.createdAt)).format('YYYY-MM-DD HH:mm:ss'),
-        completedAt: record.status === "running" ? "" : moment(Date.now()).format('YYYY-MM-DD HH:mm:ss'),
+        completedAt:
+          record.status === 'running' ? '' : moment(Date.now()).format('YYYY-MM-DD HH:mm:ss'),
         status: record.status,
-        result: record.status === "success" ? "this is a success result." : record.status === "fail" ? "this is a fail reason" : ""
-      })
+        result:
+          record.status === 'success'
+            ? 'this is a success result.'
+            : record.status === 'fail'
+            ? 'this is a fail reason'
+            : '',
+      });
     }, 2000);
   };
 
-  const columns: ProColumns<TableListItem>[] = [
+  const columns: ProColumns<API.TableListItem>[] = [
     {
       title: '排序',
       dataIndex: 'index',
@@ -78,7 +59,7 @@ const TextToSpeech: React.FC = () => {
       dataIndex: 'taskId',
       width: 500,
       render: (text, record) => (
-        <a onClick={() => handleDescribeTaskModal({record: record})}>{text}</a>
+        <a onClick={() => handleDescribeTaskModal({ record: record })}>{text}</a>
       ),
       // 自定义筛选项功能具体实现请参考 https://ant.design/components/table-cn/#components-table-demo-custom-filter-panel
       filterDropdown: () => (
@@ -125,17 +106,10 @@ const TextToSpeech: React.FC = () => {
 
   return (
     <PageContainer>
-      <ProTable<TableListItem>
+      <ProTable<API.TableListItem>
         actionRef={actionRef}
         columns={columns}
-        request={(params, sorter, filter) => {
-          // 表单搜索项会从 params 传入，传递给后端接口。
-          console.log(params, sorter, filter);
-          return Promise.resolve({
-            data: tableListDataSource,
-            success: true,
-          });
-        }}
+        request={(params) => listTextToSpeechTasks({ ...params })}
         rowKey="key"
         pagination={{
           showQuickJumper: true,
@@ -161,7 +135,7 @@ const TextToSpeech: React.FC = () => {
         ]}
       />
 
-      { /* 创建任务 */ }
+      {/* 创建任务 */}
       <NewTaskForm
         open={newTaskModalOpen}
         onOpenChange={handleNewTaskModalOpen}
@@ -176,17 +150,15 @@ const TextToSpeech: React.FC = () => {
         }}
       />
 
-      { /* 展示任务详情 */ }
+      {/* 展示任务详情 */}
       <DescribeTaskForm
         open={describeTaskModalOpen}
         onOpenChange={handleDescribeTaskModalOpen}
         value={currentTask || {}}
         loading={loading}
       />
-
     </PageContainer>
   );
 };
-
 
 export default TextToSpeech;

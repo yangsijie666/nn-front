@@ -57,6 +57,19 @@ declare namespace API {
     result?: string;
   };
 
+  type TableListItem = {
+    key: number;
+    taskId: string;
+    createdAt: number;
+    status: string;
+  };
+
+  type ListTTSResponse = {
+    data?: TableListItem[];
+    total?: number;
+    success?: boolean;
+  };
+
   type RuleList = {
     data?: RuleListItem[];
     /** 列表的内容总数 */
