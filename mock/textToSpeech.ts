@@ -48,8 +48,6 @@ function listTasks(req: Request, res: Response, u: string) {
   if (startTime && endTime) {
     let start = moment(startTime, 'YYYY-MM-DD HH:mm:ss');
     let end = moment(endTime, 'YYYY-MM-DD HH:mm:ss');
-    console.log(start.unix());
-    console.log(end.unix());
     console.log(dataSource);
     dataSource = dataSource.filter(
       (data) =>
@@ -102,7 +100,6 @@ function describeTask(req: Request, res: Response, u: string) {
     success: true,
     data: task,
   };
-  console.log(Math.random());
   setTimeout(() => {}, Math.floor(Math.random() * 100));
 
   return res.json(result);
@@ -127,7 +124,7 @@ function addTask(req: Request, res: Response, u: string) {
 }
 
 export default {
-  'POST /textToSpeech/list': listTasks,
-  'GET /textToSpeech/describe': describeTask,
-  'POST /textToSpeech/add': addTask,
+  'POST /api/textToSpeech/list': listTasks,
+  'GET /api/textToSpeech/describe': describeTask,
+  'POST /api/textToSpeech/add': addTask,
 };
