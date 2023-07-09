@@ -21,12 +21,7 @@ const genList = (current: number, pageSize: number) => {
       createdAt: (Date.now() - Math.floor(Math.random() * 100000)).toString(),
       completedAt: s != 'running' ? Date.now().toString() : '',
       input: 'this is a mock input',
-      result:
-        s == 'running'
-          ? ''
-          : s == 'success'
-          ? 'this is a success result'
-          : 'thist is a fail reason',
+      result: s == 'running' ? '' : s == 'success' ? 'test.nnn' : 'thist is a fail reason',
     });
   }
   tableListDataSource.sort((a, b) => parseInt(b.createdAt) - parseInt(a.createdAt));
