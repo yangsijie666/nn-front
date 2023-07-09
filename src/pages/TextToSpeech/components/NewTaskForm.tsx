@@ -26,6 +26,9 @@ const NewTaskForm: React.FC<NewTaskFormProps> = (props: NewTaskFormProps) => {
       open={props.open}
       onOpenChange={props.onOpenChange}
       onFinish={props.onFinish}
+      modalProps={{
+        destroyOnClose: true,
+      }}
     >
       <ProFormTextArea
         rules={[

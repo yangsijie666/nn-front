@@ -72,6 +72,9 @@ const DescribeTaskForm: React.FC<DescribeTaskFormProps> = (props: DescribeTaskFo
           <Descriptions.Item label="状态" span={2}>
             <Badge status={statusItem.status} text={statusItem.text} />
           </Descriptions.Item>
+          <Descriptions.Item label="输入文本" span={2}>
+            {props.value.input}
+          </Descriptions.Item>
           <Descriptions.Item label="任务结果" span={2}>
             {props.value.result}
           </Descriptions.Item>

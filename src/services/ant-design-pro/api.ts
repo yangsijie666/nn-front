@@ -102,3 +102,12 @@ export async function describeTextToSpeechTask(taskId: string) {
     },
   });
 }
+
+export async function addTextToSpeechTask(text: string) {
+  return request<API.AddTextToSpeechTaskResponse>('/textToSpeech/add', {
+    method: 'POST',
+    data: {
+      text: text,
+    },
+  });
+}

@@ -320,6 +320,7 @@ const TableList: React.FC = () => {
         open={createModalOpen}
         onOpenChange={handleModalOpen}
         onFinish={async (value) => {
+          // console.log(value)
           const success = await handleAdd(value as API.RuleListItem);
           if (success) {
             handleModalOpen(false);

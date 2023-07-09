@@ -20,6 +20,7 @@ const genList = (current: number, pageSize: number) => {
       status: s,
       createdAt: (Date.now() - Math.floor(Math.random() * 100000)).toString(),
       completedAt: s != 'running' ? Date.now().toString() : '',
+      input: 'this is a mock input',
       result:
         s == 'running'
           ? ''
@@ -112,7 +113,26 @@ function describeTask(req: Request, res: Response, u: string) {
   return res.json(result);
 }
 
+function addTask(req: Request, res: Response, u: string) {
+  const { text } = req.body;
+  let taskId = uuidv4();
+  tableListDataSource.unshift({
+    taskId: taskId,
+    status: 'running',
+    createdAt: Date.now().toString(),
+    input: text,
+  });
+
+  let result: API.AddTextToSpeechTaskResponse = {
+    success: true,
+    data: taskId,
+  };
+
+  return res.json(result);
+}
+
 export default {
   'POST /textToSpeech/list': listTasks,
   'GET /textToSpeech/describe': describeTask,
+  'POST /textToSpeech/add': addTask,
 };

@@ -54,6 +54,7 @@ declare namespace API {
     createdAt: string;
     completedAt?: string;
     status: string;
+    input: string;
     result?: string;
   };
 
@@ -62,6 +63,13 @@ declare namespace API {
     errorCode?: string;
     errorMessage?: string;
     data?: TextToSpeechTaskItem;
+  };
+
+  type AddTextToSpeechTaskResponse = {
+    success: boolean;
+    errorCode?: string;
+    errorMessage?: string;
+    data?: string;
   };
 
   type TableListItem = {

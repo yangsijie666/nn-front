@@ -1,4 +1,8 @@
-import { describeTextToSpeechTask, listTextToSpeechTasks } from '@/services/ant-design-pro/api';
+import {
+  addTextToSpeechTask,
+  describeTextToSpeechTask,
+  listTextToSpeechTasks,
+} from '@/services/ant-design-pro/api';
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import type { ProColumns } from '@ant-design/pro-components';
 import { ActionType, PageContainer, ProTable } from '@ant-design/pro-components';
@@ -6,6 +10,25 @@ import { Button, Input, message } from 'antd';
 import React, { useRef, useState } from 'react';
 import DescribeTaskForm from './components/DescribeTaskForm';
 import NewTaskForm from './components/NewTaskForm';
+
+const handleAdd = async (text: string) => {
+  const hide = message.loading('正在添加');
+  try {
+    const resp = await addTextToSpeechTask(text);
+    if (!resp.success) {
+      hide();
+      message.error('Generate sst task failed');
+      return false;
+    }
+    hide();
+    message.success('Generate sst task ' + resp.data + ' successfully!');
+    return true;
+  } catch (error) {
+    hide();
+    message.error('Generate sst task failed, please try again!');
+    return false;
+  }
+};
 
 const TextToSpeech: React.FC = () => {
   /**
@@ -102,7 +125,7 @@ const TextToSpeech: React.FC = () => {
         actionRef={actionRef}
         columns={columns}
         request={(params) => listTextToSpeechTasks({ ...params })}
-        rowKey="key"
+        rowKey="taskId"
         pagination={{
           showQuickJumper: true,
         }}
@@ -132,7 +155,8 @@ const TextToSpeech: React.FC = () => {
         open={newTaskModalOpen}
         onOpenChange={handleNewTaskModalOpen}
         onFinish={async (value) => {
-          const success = await handleAdd(value as API.RuleListItem);
+          const { textToSpeechInput } = value as unknown as { [key: string]: string };
+          const success = await handleAdd(textToSpeechInput);
           if (success) {
             handleNewTaskModalOpen(false);
             if (actionRef.current) {
