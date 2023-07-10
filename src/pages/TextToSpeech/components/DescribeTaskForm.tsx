@@ -77,7 +77,7 @@ const DescribeTaskForm: React.FC<DescribeTaskFormProps> = (props: DescribeTaskFo
           </Descriptions.Item>
           <Descriptions.Item label="任务结果" span={2}>
             {statusItem.status === 'success' ? (
-              <a href={'tts_result/' + props.value.result} download>
+              <a href={props.value.result} download={props.value.result}>
                 点击下载
               </a>
             ) : statusItem.status === 'error' ? (
