@@ -18,18 +18,24 @@ npm run start
 ## 构建生产环境容器并使用
 
 1. 更新 `deploy/nginx.conf` 中的 `proxy_pass` 为后端服务地址，例如：
+
    ```text
    proxy_pass http://127.0.0.1:8080;
    ```
+
+   > 例如后端服务部署在本机，前端部署在容器中，则将该地址替换为本机的地址。
+   >
+   > 在 mac 中可以通过 `ifconfig` 查看 `en0` 端口的地址，如 `192.168.150.22`，则替换为 `proxy_pass http://192.168.150.22:8080;`
+
 2. 构建生产环境容器
    ```shell
    docker build -f deploy/Dockerfile -t nn-front:prod-v1 .
    ```
 3. 运行生产环境容器：
 
-```shell
-docker run -itd --name nn -p 8080:80 -v ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf  nn-front:prod-v1
-```
+   ```shell
+   docker run -itd --name nn -p 8080:80 -v ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf  nn-front:prod-v1
+   ```
 
 ## Environment Prepare
 
