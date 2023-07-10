@@ -32,10 +32,10 @@ npm run start
    docker build -f deploy/Dockerfile -t nn-front:prod-v1 .
    ```
 3. 运行生产环境容器：
-
    ```shell
-   docker run -itd --name nn -p 8080:80 -v ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf  nn-front:prod-v1
+   docker run -itd --name nn -p 8080:80 -v ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf -v /path/to/tts/result:/usr/src/app/dist/tts_result nn-front:prod-v1
    ```
+   > 记得将 `/path/to/tts/result` 替换为后端服务处理完生成的文件所在目录
 
 ## Environment Prepare
 
