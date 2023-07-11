@@ -15,78 +15,44 @@ npm install tyarn -g && tyarn
 npm run start
 ```
 
+## 部署架构
+
+![部署架构](docs/deploy-arch.png)
+
+🍓 若端口配置如上图，假设生成的文件为 `测试文件.txt`，则 DB 中存放的文件地址应当为 `http://127.0.0.1:8999/files/测试文件.txt`
+
+## 核心流程
+
+![img.png](docs/core-process.png)
+
 ## 构建生产环境容器并使用
 
-1. 更新 `deploy/nginx.conf` 中的 `proxy_pass` 为后端服务地址，例如：
+1. 按需更新 `.deploy/.env` 中的配置：
+   - HOST_FRONT_PORT：前端映射到本机的端口
+   - HOST_FS_PORT：文件服务器映射到本机的端口，决定了存放在数据库中的文件地址：`http://127.0.0.1:HOST_FS_PORT/files/`
+   - HOST_FILE_PATH：后端服务生成的文件绝对路径
+2. 更新 `deploy/nginx.conf` 中的 `proxy_pass` 为后端服务地址，例如：
 
    ```text
-   proxy_pass http://127.0.0.1:8080;
+   proxy_pass http://127.0.0.1:8000;
    ```
 
    > 例如后端服务部署在本机，前端部署在容器中，则将该地址替换为本机的地址。
    >
    > 在 mac 中可以通过 `ifconfig` 查看 `en0` 端口的地址，如 `192.168.150.22`，则替换为 `proxy_pass http://192.168.150.22:8080;`
 
-2. 构建生产环境容器
+3. 构建并运行生产环境容器
+
+   在项目根目录下执行：
+
    ```shell
-   docker build -f deploy/Dockerfile -t nn-front:prod-v1 .
+   docker-compose -f ./deploy/docker-compose.yml up -d
    ```
-3. 运行生产环境容器：
+
+4. 停止并删除容器
+
+   在项目根目录下执行：
+
    ```shell
-   docker run -itd --name nn -p 8080:80 -v ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf -v /path/to/tts/result:/usr/src/app/dist/tts_result nn-front:prod-v1
+   docker-compose -f ./deploy/docker-compose.yml down
    ```
-   > 记得将 `/path/to/tts/result` 替换为后端服务处理完生成的文件所在目录
-
-## Environment Prepare
-
-Install `node_modules`:
-
-```bash
-npm install
-```
-
-or
-
-```bash
-yarn
-```
-
-## Provided Scripts
-
-Ant Design Pro provides some useful script to help you quick start and build with web project, code style check and test.
-
-Scripts provided in `package.json`. It's safe to modify or add additional script:
-
-### Start project
-
-```bash
-npm start
-```
-
-### Build project
-
-```bash
-npm run build
-```
-
-### Check code style
-
-```bash
-npm run lint
-```
-
-You can also use script to auto fix some lint error:
-
-```bash
-npm run lint:fix
-```
-
-### Test code
-
-```bash
-npm test
-```
-
-## More
-
-You can view full document on our [official website](https://pro.ant.design). And welcome any feedback in our [github](https://github.com/ant-design/ant-design-pro).
